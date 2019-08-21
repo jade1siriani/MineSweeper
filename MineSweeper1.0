@@ -1,0 +1,196 @@
+/**
+ * This project mimics the game idea of MineSweeper
+ * Each cell in the grid contains either a mine, 
+ *     or a number indicating the # of mines surrounding that cell
+ * @author (Jade Aboud Siriani)
+ * @version (1.0 August 21, 2019)
+ * 
+ * furthur modifications: 
+ *  1) Adding a graphycal interface to the code
+ *  2) Implementing the mechanism of hiding the cells until clicked
+ *  3) Creating a scoring feature
+ */
+import java.util.Scanner;
+public class MineSweeper2{
+    //In main: set up the grid and fill it with mines.
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in); //set up scanner
+
+        System.out.println("Enter the length of the grid: "); 
+        int length = in.nextInt();
+        int[][] grid = new int [length] [length];
+        
+        //Distributing mines across the grid
+        for(int i=0; i<grid.length; i++){
+            for(int j=0; j< grid[i].length; j++){
+                int posibility = (int)(Math.random() * 4 ); 
+                if(posibility == 1) 
+                    grid[i][j] = 9;
+                else 
+                    grid[i][j] = 0;
+            }
+        }
+           
+        //populating numbers according to the mines surrounding it
+        for(int i=0; i<grid.length; i++){
+            for(int j=0; j< grid[i].length; j++){
+                //first row
+                if(i == 0){
+                    //upper left corner
+                    if(j == 0){
+                        checkRight(grid, i,j);
+                        if((grid[i+1][j])>=9){          //below
+                            grid[i][j] = grid[i][j]+1;
+                        }
+                        if((grid[i+1][j+1])>=9){        //lower right
+                            grid[i][j] = grid[i][j]+1;
+                        }
+                    }
+                    //upper right corner
+                    else if(j == grid[i].length-1){
+                        checkLeft(grid, i,j);
+                        if((grid[i+1][j])>=9){          //below
+                            grid[i][j] = grid[i][j]+1;
+                        }
+                        if((grid[i+1][j-1])>=9){        //lower left
+                            grid[i][j] = grid[i][j]+1;
+                        }
+                    }
+                    //first row middle
+                    else{
+                        checkBelow(grid, i,j);
+                        checkRight(grid, i,j);
+                        checkLeft(grid, i,j);
+                    }
+                    continue;
+                }
+                /*******************************/
+                //last row
+                else if(i==grid.length-1){
+                    if(j == 0){
+                        //lower left corner
+                        checkRight(grid, i,j);
+                        if((grid[i-1][j])>=9){          //above
+                            grid[i][j] = grid[i][j]+1;
+                        }
+                        if((grid[i-1][j+1])>=9){        //upper right
+                            grid[i][j] = grid[i][j]+1;
+                        }
+                    }
+                    //lower right corner
+                    else if(j == grid[i].length-1){
+                        checkLeft(grid, i,j);
+                        if((grid[i-1][j])>=9){          //above
+                            grid[i][j] = grid[i][j]+1;
+                        }
+                        if((grid[i-1][j-1])>=9){        //upper left
+                            grid[i][j] = grid[i][j]+ 1;
+                        }
+                    }
+                    //middle
+                    else{
+                        checkAbove(grid, i,j);
+                        checkRight(grid, i,j);
+                        checkLeft(grid, i,j);
+                    }
+                    continue;
+                }
+                /*******************************/
+                //left column
+                else if(j == 0){
+                    checkRight(grid, i,j);
+                    if((grid[i-1][j])>=9){          //above
+                        grid[i][j] = grid[i][j]+1;
+                    }
+                    if((grid[i+1][j])>=9){          //below
+                        grid[i][j] = grid[i][j]+1;
+                    }
+                    if((grid[i-1][j+1])>=9){
+                        grid[i][j] = grid[i][j]+1;
+                    }
+                    if((grid[i+1][j+1])>=9){
+                        grid[i][j] = grid[i][j]+1;
+                    }
+                }
+                /*******************************/
+                //right column
+                else if(j == grid.length-1){
+                    checkLeft(grid, i,j);
+                    if((grid[i-1][j])>=9){          //above
+                        grid[i][j] = grid[i][j]+1;
+                    }
+                    if((grid[i+1][j])>=9){          //below
+                        grid[i][j] = grid[i][j]+1;
+                    }
+                    if((grid[i-1][j-1])>=9){
+                        grid[i][j] = grid[i][j]+1;
+                    }
+                    if((grid[i+1][j-1])>=9){
+                        grid[i][j] = grid[i][j]+1;
+                    }
+                }
+                /*******************************/
+                //inner grid
+                else{
+                    checkAbove(grid, i,j);
+                    checkBelow(grid, i,j);
+                    checkRight(grid, i,j);
+                    checkLeft(grid, i,j);
+                }
+            }
+        }
+
+        //printing the grid's element
+        for(int i=0; i<grid.length; i++){
+            for(int j=0; j< grid[i].length; j++){
+                if(j >= grid[i].length-1){
+                    if(grid[i][j] >= 9){
+                        System.out.println("*");
+                    }else{
+                        System.out.println(grid[i][j]); 
+                    }
+                }else{
+                    if(grid[i][j] >= 9){
+                        System.out.print("*\t");
+                    }else{
+                        System.out.print(grid[i][j] + "\t"); 
+                    }
+                }
+            }
+        }
+    }
+    
+    //member functions
+    public static void checkLeft(int[][] grid, int i, int j){
+        if((grid[i][j-1])>=9){          //left
+            grid[i][j] = grid[i][j]+1;
+        }
+    }
+    public static void checkRight(int[][] grid, int i, int j){
+        if((grid[i][j+1])>=9){          //right
+            grid[i][j] = grid[i][j]+1;
+        }
+    }
+    public static void checkAbove(int[][] grid, int i, int j){
+        if((grid[i-1][j-1])>=9){         
+            grid[i][j] = grid[i][j]+1;
+        }
+        if((grid[i-1][j])>=9){         
+            grid[i][j] = grid[i][j]+1;
+        }
+        if((grid[i-1][j+1])>=9){          
+            grid[i][j] = grid[i][j]+1;
+        }
+    }
+    public static void checkBelow(int[][] grid, int i, int j){
+        if((grid[i+1][j-1])>=9){          
+            grid[i][j] = grid[i][j]+1;
+        }
+        if((grid[i+1][j])>=9){          
+            grid[i][j] = grid[i][j]+1;
+        }
+        if((grid[i+1][j+1])>=9){          
+            grid[i][j] = grid[i][j]+1;
+        }
+    }
+} 
